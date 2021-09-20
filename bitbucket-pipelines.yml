@@ -1,0 +1,79 @@
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Build Code
+          image: mcr.microsoft.com/dotnet/core/sdk:3.1
+          caches:
+            - dotnetcore
+          script:
+            - cd src/CostReporting
+            - dotnet restore
+            - dotnet build --no-restore --configuration Release
+      - step:
+          name: Publish Code
+          image: mcr.microsoft.com/dotnet/core/sdk:3.1
+          caches:
+            - dotnetcore
+          script:
+            - cd src/CostReporting
+            - dotnet publish --output "./Solution" --configuration "Release" --framework "netcoreapp3.1" /p:GenerateRuntimeConfigurationFiles=true --runtime linux-x64 --self-contained false
+          artifacts:
+            - src/CostReporting/Solution/*
+      - step:
+          name: Terraform Run for Pre-Requisites
+          image: hashicorp/terraform:0.14.9
+          script:
+            - wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+            - chmod +x ./jq
+            - cp jq /usr/local/bin
+            - |
+              #!/usr/bin/env bash
+              targets=$(jq -c '.[]' targets.json)
+              for account in ${targets}
+                do
+                  workspace=$(echo ${account} | jq -r '.Workspace') || workspace=$(echo ${account} | jq -r '.Account')
+                  echo ${workspace}
+                  access_key_var=$(echo ${account} | jq -r '.AccessKeyVariable')
+                  secret_key_var=$(echo ${account} | jq -r '.SecretKeyVariable')
+                  cd pre-requisite
+                  terraform init
+                  terraform workspace new "$workspace" || terraform workspace select "$workspace"
+                  terraform validate
+                  terraform plan -var access_key=${!access_key_var} -var secret_key=${!secret_key_var}
+                  terraform apply -input=false -auto-approve -var access_key=${!access_key_var} -var secret_key=${!secret_key_var}
+                  bucket_id=$(terraform output -raw deployment_bucket_id)
+                  echo "export BUCKET_ID=$bucket_id" >> ../set_env.sh
+                  echo "export WORKSPACE_NAME=$workspace" >> ../set_env.sh
+                done
+          artifacts:
+            - set_env.sh
+      - step:
+          name: Zip and Deploy to S3
+          script:
+            - source set_env.sh
+            - echo "Installing zip"
+            - apt-get -y update
+            - apt-get -y install zip
+            - cd src/CostReporting/Solution
+            - mkdir Output
+            - echo "Zipping output"
+            - zip -r Output/CostReporting.zip .
+            - pipe: atlassian/aws-s3-deploy:0.5.0
+              variables:
+                  AWS_DEFAULT_REGION: 'eu-west-1'
+                  S3_BUCKET: $BUCKET_ID
+                  LOCAL_PATH: 'Output'
+          artifacts:
+            - src/CostReporting/Solution/Output/*
+      - step:
+          name: Terraform Run
+          image: hashicorp/terraform:0.14.9
+          script:
+            - source set_env.sh
+            - terraform init
+            - terraform validate
+            - terraform plan -var access_key=$AWS_ACCESS_KEY_ID -var secret_key=$AWS_SECRET_ACCESS_KEY -var cost_reporting_bucket_id=$BUCKET_ID
+            - terraform apply -input=false -auto-approve -var access_key=$AWS_ACCESS_KEY_ID -var secret_key=$AWS_SECRET_ACCESS_KEY -var cost_reporting_bucket_id=$BUCKET_ID
+
+

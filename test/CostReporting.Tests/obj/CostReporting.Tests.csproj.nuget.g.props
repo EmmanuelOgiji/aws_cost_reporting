@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/usr/local/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/usr/local/.nuget/packages/</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.3.0</NuGetToolVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)microsoft.net.test.sdk/15.5.0/build/netcoreapp1.0/Microsoft.Net.Test.Sdk.props" Condition="Exists('$(NuGetPackageRoot)microsoft.net.test.sdk/15.5.0/build/netcoreapp1.0/Microsoft.Net.Test.Sdk.props')" />
+    <Import Project="$(NuGetPackageRoot)xunit.runner.visualstudio/2.3.1/build/netcoreapp1.0/xunit.runner.visualstudio.props" Condition="Exists('$(NuGetPackageRoot)xunit.runner.visualstudio/2.3.1/build/netcoreapp1.0/xunit.runner.visualstudio.props')" />
+    <Import Project="$(NuGetPackageRoot)xunit.core/2.3.1/build/xunit.core.props" Condition="Exists('$(NuGetPackageRoot)xunit.core/2.3.1/build/xunit.core.props')" />
+  </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">/usr/local/.nuget/packages/newtonsoft.json/9.0.1</PkgNewtonsoft_Json>
+    <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">/usr/local/.nuget/packages/xunit.analyzers/0.7.0</Pkgxunit_analyzers>
+    <PkgAWSSDK_Core Condition=" '$(PkgAWSSDK_Core)' == '' ">/usr/local/.nuget/packages/awssdk.core/3.7.0.4</PkgAWSSDK_Core>
+    <PkgAWSSDK_SimpleNotificationService Condition=" '$(PkgAWSSDK_SimpleNotificationService)' == '' ">/usr/local/.nuget/packages/awssdk.simplenotificationservice/3.7.0.4</PkgAWSSDK_SimpleNotificationService>
+    <PkgAWSSDK_SimpleEmail Condition=" '$(PkgAWSSDK_SimpleEmail)' == '' ">/usr/local/.nuget/packages/awssdk.simpleemail/3.7.0.3</PkgAWSSDK_SimpleEmail>
+    <PkgAWSSDK_CostExplorer Condition=" '$(PkgAWSSDK_CostExplorer)' == '' ">/usr/local/.nuget/packages/awssdk.costexplorer/3.7.0.3</PkgAWSSDK_CostExplorer>
+  </PropertyGroup>
+</Project>

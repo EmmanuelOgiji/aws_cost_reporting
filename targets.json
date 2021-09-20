@@ -1,0 +1,8 @@
+[
+  {
+    "Account": "ecsd-poc",
+    "Workspace": "default",
+    "AccessKeyVariable": "AWS_ACCESS_KEY_ID",
+    "SecretKeyVariable": "AWS_SECRET_ACCESS_KEY"
+  }
+]
